@@ -14,6 +14,12 @@ pi install git:github.com/aixy-tech/pi-aixy
 
 Restart Pi, or use `/reload` in an existing session. The package is installed from GitHub; it does not require an npm publication.
 
+To update an existing installation:
+
+```sh
+pi update --extension git:github.com/aixy-tech/pi-aixy
+```
+
 To try it for one session:
 
 ```sh
@@ -108,6 +114,12 @@ npm test
 npm pack --dry-run --ignore-scripts
 ```
 
-Tests cover discovery, authentication, credential changes, cancellation, error handling, tool-call streaming and replay, package installation, CLI model listing, and headless inference against a local mock gateway. They do not use real Aixy credentials or paid model inference.
+Tests cover discovery, authentication, credential changes, cancellation, error handling, tool-call streaming and replay, package installation, CLI model listing, and headless inference against a local mock gateway. CLI tests load a copy outside the checkout without development dependencies, matching the runtime imports available to Git installations. They do not use real Aixy credentials or paid model inference.
+
+To run the CLI tests with a separately installed Pi executable:
+
+```sh
+PI_AIXY_TEST_CLI="$(command -v pi)" npm test -- test/cli.test.ts
+```
 
 MIT licensed.

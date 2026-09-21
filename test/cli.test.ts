@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -13,10 +13,24 @@ const cli = join(
   dirname(fileURLToPath(import.meta.resolve("@earendil-works/pi-coding-agent"))),
   "bundle/cli.js",
 );
+const command = process.env.PI_AIXY_TEST_CLI || process.execPath;
+const cliArgs = process.env.PI_AIXY_TEST_CLI ? [] : [cli];
+
+async function copyInstalledPackage(dir: string): Promise<string> {
+  const target = join(dir, "package");
+  await mkdir(target);
+  // Git installs omit development dependencies. Keep the extension outside the
+  // checkout so missing host-provided imports cannot resolve from our node_modules.
+  for (const path of ["package.json", "index.ts", "src"]) {
+    await cp(join(root, path), join(target, path), { recursive: true });
+  }
+  return target;
+}
 
 describe("Pi package integration", () => {
-  it("installs the package and discovers models before --list-models with environment credentials", async () => {
+  it("installs without development dependencies and discovers models before --list-models", async () => {
     const dir = await mkdtemp(join(tmpdir(), "pi-aixy-cli-"));
+    const installedPackage = await copyInstalledPackage(dir);
     const requests: string[] = [];
     const server = createServer((request, response) => {
       requests.push(`${request.url} ${request.headers.authorization}`);
@@ -37,11 +51,11 @@ describe("Pi package integration", () => {
       NO_COLOR: "1",
     };
     try {
-      await run(process.execPath, [cli, "install", root], { cwd: dir, env, timeout: 20_000 });
+      await run(command, [...cliArgs, "install", installedPackage], { cwd: dir, env, timeout: 20_000 });
       const result = await run(
-        process.execPath,
+        command,
         [
-          cli,
+          ...cliArgs,
           "--no-skills",
           "--no-prompt-templates",
           "--no-themes",
@@ -63,6 +77,7 @@ describe("Pi package integration", () => {
 
   it("resolves stored credential references and runs a headless prompt through the gateway", async () => {
     const dir = await mkdtemp(join(tmpdir(), "pi-aixy-prompt-"));
+    const installedPackage = await copyInstalledPackage(dir);
     const agentDir = join(dir, "agent");
     await mkdir(agentDir);
     await writeFile(
@@ -92,11 +107,11 @@ describe("Pi package integration", () => {
     if (!address || typeof address === "string") throw new Error("Missing server address");
     try {
       const pending = run(
-        process.execPath,
+        command,
         [
-          cli,
+          ...cliArgs,
           "-e",
-          root,
+          installedPackage,
           "--no-extensions",
           "--no-skills",
           "--no-prompt-templates",

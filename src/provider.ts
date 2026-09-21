@@ -1,6 +1,6 @@
 import type { Model, Provider } from "@earendil-works/pi-ai";
 import { envApiKeyAuth } from "@earendil-works/pi-ai";
-import { stream, streamSimple } from "@earendil-works/pi-ai/api/openai-completions";
+import { openAICompletionsApi } from "@earendil-works/pi-ai/compat";
 
 export const DEFAULT_BASE_URL = "https://api.aixy-gateway.com/v1";
 
@@ -61,6 +61,7 @@ export function parseModels(body: unknown, baseUrl: string): Model<"openai-compl
 
 export function createAixyProvider(baseUrl = DEFAULT_BASE_URL): Provider<"openai-completions"> {
   const endpoint = normalizeBaseUrl(baseUrl);
+  const { stream, streamSimple } = openAICompletionsApi();
   let models: Model<"openai-completions">[] = [];
   let catalogKey: string | undefined;
 
