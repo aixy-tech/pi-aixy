@@ -287,7 +287,8 @@ describe("Aixy streaming", () => {
     );
     expect(second.stopReason).toBe("stop");
     expect(second.content).toContainEqual(expect.objectContaining({ type: "text", text: "Done." }));
-    expect(payloads[0]).toMatchObject({ model: "aixy/coding", stream: true, max_tokens: 4096 });
+    expect(payloads[0]).toMatchObject({ model: "aixy/coding", stream: true, max_completion_tokens: 4096 });
+    expect(payloads[0]).not.toHaveProperty("max_tokens");
     expect(payloads[0]).not.toHaveProperty("store");
     expect(payloads[0]).not.toHaveProperty("reasoning_effort");
     expect(payloads[1].messages).toContainEqual(

@@ -63,6 +63,8 @@ This setting applies to both discovery and inference. A host-only URL is normali
 
 Keep the credential aligned with the selected gateway. Configure the endpoint with `AIXY_BASE_URL`, rather than a `models.json` base URL override that would affect inference alone.
 
+Requests use `max_completion_tokens`, which current OpenAI models require and Aixy translates for its Anthropic and Bedrock adapters. For a legacy compatible endpoint that only accepts `max_tokens`, set `compat.maxTokensField` to `"max_tokens"` in that model's `modelOverrides` entry.
+
 ## Model metadata and offline use
 
 Aixy's public catalog returns IDs, not context limits, prices, or capabilities. Discovered entries therefore start with these local defaults:

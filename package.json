@@ -1,6 +1,6 @@
 {
   "name": "pi-aixy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Aixy project models and routing for the Pi coding agent",
   "type": "module",
   "license": "MIT",

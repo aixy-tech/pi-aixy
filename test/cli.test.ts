@@ -95,8 +95,22 @@ describe("Pi package integration", () => {
       }
       let body = "";
       for await (const chunk of request) body += String(chunk);
-      const payload = JSON.parse(body) as { model: string };
+      const payload = JSON.parse(body) as { model: string; max_tokens?: number };
       requests.push({ path: request.url, auth: request.headers.authorization, model: payload.model });
+      if (payload.max_tokens !== undefined) {
+        response.writeHead(400, { "content-type": "application/json" });
+        response.end(
+          JSON.stringify({
+            error: {
+              message: "Unsupported parameter: 'max_tokens'. Use 'max_completion_tokens' instead.",
+              type: "invalid_request_error",
+              param: "max_tokens",
+              code: "unsupported_parameter",
+            },
+          }),
+        );
+        return;
+      }
       response.writeHead(200, { "content-type": "text/event-stream" });
       response.end(
         `data: ${JSON.stringify({ id: "chatcmpl_test", object: "chat.completion.chunk", model: "upstream/model", choices: [{ index: 0, delta: { role: "assistant", content: "Hello from the test gateway." }, finish_reason: "stop" }], usage: { prompt_tokens: 8, completion_tokens: 5, total_tokens: 13 } })}\n\ndata: [DONE]\n\n`,

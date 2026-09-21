@@ -52,7 +52,7 @@ export function parseModels(body: unknown, baseUrl: string): Model<"openai-compl
       supportsStore: false,
       supportsDeveloperRole: false,
       supportsReasoningEffort: false,
-      maxTokensField: "max_tokens",
+      maxTokensField: "max_completion_tokens",
       supportsStrictMode: false,
       supportsLongCacheRetention: false,
     },
