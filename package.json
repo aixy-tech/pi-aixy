@@ -1,0 +1,50 @@
+{
+  "name": "pi-aixy",
+  "version": "0.1.0",
+  "description": "Aixy project models and routing for the Pi coding agent",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aixy-tech/pi-aixy.git"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "aixy",
+    "llm",
+    "gateway"
+  ],
+  "files": [
+    "index.ts",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "check": "biome check --error-on-warnings . && tsc --noEmit",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "prepack": "npm run check && npm test"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.5",
+    "@earendil-works/pi-ai": "0.87.0",
+    "@earendil-works/pi-coding-agent": "0.87.0",
+    "@types/node": "22.19.19",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  }
+}
